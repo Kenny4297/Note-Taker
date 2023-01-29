@@ -1,52 +1,78 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const { listeners } = require('process');
 const app = express();
 const uuid = require('./public/assets/js/uuid.js')
 
 const PORT = 5601;
 
+// Importing some necessary middleware
 app.use(express.static('public'));
 app.use(express.urlencoded( { extended: true }))
 app.use(express.json());
 
-app.get('/api/notes', (req, res) => {
+//This is a function that gets the notes from the db.json and returns it in an object form.
+const getNotes = async () => {
+  let rawNotes = await fs.readFile(('./db/db.json', (err, data) => console.log("Sorry, an error occurred!")));
+  let notes = JSON.parse(rawNotes);
+  return notes;
+}
+
+//!ROUTES SECTION
+//Route to the homepage, index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './public/index.html'));
+})
+
+//This is the route to the 'notes.html' page itself. This is separate from getting the data from the db.json
+app.get('/notes', (req, res) => {
   res.sendFile(path.resolve(__dirname, './public/notes.html'));
 });
 
-app.post('/api/notes', (req, res) => {
-    console.log(`${req.method}is the method`)
-    const { title, name } = req.body;
-    if (title && name) {
-        const newNotes = {
-            title, 
-            name,
-            noteId: uuid()
-        }
-
-        // fs.writeFile(`./db/${newNotes.title}.json`, JSON.stringify(newNotes), (err) =>
-        // err
-        //   ? console.error(err)
-        //   : console.log(
-        //       `Review for ${newNotes.title} has been written to JSON file`
-        //     )
-        // )
-
-        const response = {
-            status: 'success',
-            body: newNotes,
-        };
-
-        res.status(201).json(response);
-    } else {
-        res.status(500).json('Error in saving the note');
-    }
+//=====================================
+//!API ROUTES SECTION (DATABASE READING AND WRITING)
+//Get all the notes stored from the db and show them in the left hand column
+app.get('/api/notes', async (req, res) => {
+  let getNotesData = await getNotes();
 });
 
-//Returning the specific note the user wants to view when clicked on the left side of the '/notes' page
-// app.get('/api/notes/:noteId', (req, res) => {
+app.post('/api/notes', async (req, res) => {
+  //Just checking to see if I have the right method here
+  console.log(`${req.method} is the method`)
 
-// })
+  //Destructuring the title (first input bar) and the name (the second input par)
+  const { title, name } = req.body;
+
+  //Checking to see if they both exist and assigning an id to them
+  if (title && name) {
+      const newNote = {
+          title, 
+          name,
+          noteId: uuid()
+      }
+    
+      let getAllNotes = await getNotes();
+      getAllNotes.push(newNote);
+
+      //Write the files to the database
+        //First we need to convert the notes to a string
+      let noteToWrite = JSON.stringify(getAllNotes);
+
+      //Now we can write the notes back to the database
+      
+
+      //Setting up the message to send ot the user. Contains the status and what they wrote.
+      const response = {
+          status: 'success',
+          body: newNote,
+      };
+
+      res.status(201).json(response);
+  } else {
+      res.status(500).json('Error in saving the note');
+  }
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, './public/index.html'))
