@@ -15,6 +15,7 @@ app.get('/api/notes', (req, res) => {
 });
 
 app.post('/api/notes', (req, res) => {
+    console.log(`${req.method}is the method`)
     const { title, name } = req.body;
     if (title && name) {
         const newNotes = {
@@ -23,13 +24,13 @@ app.post('/api/notes', (req, res) => {
             noteId: uuid()
         }
 
-        fs.writeFile(`./db/${newNotes.title}.json`, JSON.stringify(newNotes), (err) =>
-        err
-          ? console.error(err)
-          : console.log(
-              `Review for ${newNotes.title} has been written to JSON file`
-            )
-        )
+        // fs.writeFile(`./db/${newNotes.title}.json`, JSON.stringify(newNotes), (err) =>
+        // err
+        //   ? console.error(err)
+        //   : console.log(
+        //       `Review for ${newNotes.title} has been written to JSON file`
+        //     )
+        // )
 
         const response = {
             status: 'success',
