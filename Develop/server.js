@@ -16,9 +16,10 @@ const getNotes = async () => {
   try {
     //This will not work if you just use 'readFile'. Not sure why- awaiting tutor response
     const data = await fs.promises.readFile('./db/db.json');
-    let log = await console.log(`The data on line 18 is ${data}`)
+
+    // The data type returned from 'readFile' is a buffer, you need to convert it into an object
     const notes = await JSON.parse(data);
-    console.log(notes)
+
     return notes;
   } catch (err) {
     throw err;
@@ -45,53 +46,48 @@ app.get('/api/notes', async (req, res) => {
 });
 
 app.post('/api/notes', async (req, res) => {
-  //Just checking to see if I have the right method here
-  console.log(`${req.method} is the method`)
-
-  //Destructuring the title (first input bar) and the name (the second input par)
+  //Destructuring the title (first input bar) and the name (the second input bar)
   const { title, text } = req.body;
 
   const newNote = {
     title,
     text,
+    //Need to add an id to the note so it can be found specifically for potential deletion
     id: uuid()
   }
-
+  //Retrieving the notes in a json object so we can add to it
   let getAllNotes = await getNotes();
+
+  //Adding to the note
   getAllNotes.push(newNote);
-  console.log(`The 'getAllNotes' variable on line 56 is: ${getAllNotes}`)
 
   //Write the files to the database
     //First we need to convert the notes to a string
   let noteToWrite = JSON.stringify(getAllNotes);
-  console.log(`The 'noteToWrite' is ${noteToWrite}`)
 
   //Now we can write the notes back to the database
   fs.writeFile('./db/db.json', noteToWrite, (err, data) => {
-    console.log(`Line 71, what the 'fs.writeFile' wrote: `)
     if (err) {
       console.log("Sorry, an error has occurred!")
     }
   })
 
-  //Setting up the message to send ot the user. Contains the status and what they wrote.
-  const response = {
-      status: 'success',
-      body: newNote,
-  };
-
   res.status(201).json(noteToWrite);
+  //Because we are not sending anything back to the user, we need to end the request somehow. Note how sending json does not end the request
   res.end();
 
 });
-//Why do I get the error "Syntax Error: Unexpected end of JSON input"
+
 app.delete('/api/notes/:noteId', async (req, res) => {
   //Getting the noteId from the params
   let noteId = req.params.noteId
 
-  //Getting the notes
+  //Getting the notes in a json object
   let getAllNotes = await getNotes();
+
+  //Finding a note in the object with an id that matches the req.params
   let deleteSpecificNote = getAllNotes.find((note) => {
+    //Remember that 'id' was a property we add to all created notes. 
     note.id === noteId;
   })
 
@@ -104,12 +100,12 @@ app.delete('/api/notes/:noteId', async (req, res) => {
   //writing the current set of notes back to the db
   let currentNotes = JSON.stringify(getAllNotes);
 
+  // Writing the updated file back to the database
   fs.writeFile('./db/db.json', currentNotes, (err, data) => {
     if (err) {
       console.log("Sorry, an error has occurred!")
     }
   })
-  console.log(getNotes())
   return res.json(getNotes())
 });
 
