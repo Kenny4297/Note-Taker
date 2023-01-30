@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 const uuid = require('./public/assets/js/uuid.js')
 
-const PORT = 5601;
+const PORT = process.env.PORT || 5601;
 
 // Importing some necessary middleware
 app.use(express.static('public'));
