@@ -102,13 +102,9 @@ app.delete('/api/notes/:noteId', async (req, res) => {
   console.log(currentNotes)
 
   // Writing the updated file back to the database
-  fs.writeFile('./db/db.json', currentNotes, (err, data) => {
-    if (err) {
-      console.log("Sorry, an error has occurred!")
-    }
-  })
-  // return res.json(getNotes())
-  res.end();
+  const data = await fs.promises.writeFile('./db/db.json', currentNotes);
+
+  return res.status(401).json(getNotes())
 });
 
 app.get('*', (req, res) => {
