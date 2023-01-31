@@ -88,11 +88,14 @@ app.delete('/api/notes/:noteId', async (req, res) => {
   //Finding a note in the object with an id that matches the req.params
   let deleteSpecificNote = getAllNotes.find((note) => {
     //Remember that 'id' was a property we add to all created notes. 
-    note.id === noteId;
+    return note.id === noteId;
   })
+  console.log(`The variable 'delete specific note' is ${deleteSpecificNote}`);
 
   //Finding the index of the note
   let indexOfNote = getAllNotes.indexOf(deleteSpecificNote);
+  console.log(`The db.json is ${getAllNotes}`)
+  console.log(`The index of the note you selected to delete is ${indexOfNote}`)
 
   //Deleting the note
   getAllNotes.splice(indexOfNote, 1);
