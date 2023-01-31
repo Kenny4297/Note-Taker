@@ -42,7 +42,7 @@ app.get('/notes', (req, res) => {
 //Get all the notes stored from the db and show them in the left hand column
 app.get('/api/notes', async (req, res) => {
   let getNotesData = await getNotes();
-  res.send(getNotesData);
+  res.status(200).send(getNotesData);
 });
 
 app.post('/api/notes', async (req, res) => {
@@ -99,6 +99,7 @@ app.delete('/api/notes/:noteId', async (req, res) => {
 
   //writing the current set of notes back to the db
   let currentNotes = JSON.stringify(getAllNotes);
+  console.log(currentNotes)
 
   // Writing the updated file back to the database
   fs.writeFile('./db/db.json', currentNotes, (err, data) => {
@@ -106,7 +107,8 @@ app.delete('/api/notes/:noteId', async (req, res) => {
       console.log("Sorry, an error has occurred!")
     }
   })
-  return res.json(getNotes())
+  // return res.json(getNotes())
+  res.end();
 });
 
 app.get('*', (req, res) => {
