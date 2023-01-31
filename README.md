@@ -12,6 +12,7 @@
   * [Contribution](#contribution)
   * [Tests](#tests)
   * [Questions](#questions)
+  * [Screenshot](#screenshot)
   * [Deployment](#deployment)
 
   ### Description
@@ -35,5 +36,8 @@
   ### Questions
   * Any questions? Visit the github repository here! https://github.com/Kenny4297/Taking-Some-Notes
 
+  ### Screenshot
+  * The following is a quick view of my project: ![Screenshot](./public/assets/images/NoteTaker.png)
+
   ### Deployment
-  To view the deployed application, click here: 
+  To view the deployed application, click here: [Deployment Site](https://taking-some-notes-production-b553.up.railway.app/)
