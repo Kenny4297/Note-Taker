@@ -73,7 +73,7 @@ app.post('/api/notes', async (req, res) => {
   })
 
   res.status(201).json(noteToWrite);
-  //Because we are not sending anything back to the user, we need to end the request somehow. Note how sending json does not end the request
+  //Because we are not sending anything back to the user, we need to end the request somehow. Note how sending json does not end the request!
   res.end();
 
 });
@@ -90,24 +90,20 @@ app.delete('/api/notes/:noteId', async (req, res) => {
     //Remember that 'id' was a property we add to all created notes. 
     return note.id === noteId;
   })
-  console.log(`The variable 'delete specific note' is ${deleteSpecificNote}`);
 
   //Finding the index of the note
   let indexOfNote = getAllNotes.indexOf(deleteSpecificNote);
-  console.log(`The db.json is ${getAllNotes}`)
-  console.log(`The index of the note you selected to delete is ${indexOfNote}`)
 
   //Deleting the note
   getAllNotes.splice(indexOfNote, 1);
 
   //writing the current set of notes back to the db
   let currentNotes = JSON.stringify(getAllNotes);
-  console.log(currentNotes)
 
   // Writing the updated file back to the database
   const data = await fs.promises.writeFile('./db/db.json', currentNotes);
 
-  return res.status(401).json(getNotes())
+  return res.status(200).json(getNotes())
 });
 
 app.get('*', (req, res) => {
