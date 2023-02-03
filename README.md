@@ -22,7 +22,7 @@
   Nothing, other than the 'npm install'
 
   ### Usage
-  From the 'Developt' folder, enter 'node server.js'.
+  From the 'noteTaker' folder, enter 'node server.js'.
 
   ### Licenses
   MIT
